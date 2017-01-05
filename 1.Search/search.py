@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -87,7 +87,42 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    actions = []
+    pred = dict()
+    visited = dict()
+
+    s = problem.getStartState()
+    s1 = (s,'',1)
+    q = util.Stack()
+    q.push(s1)
+    last = None
+
+    while(not q.isEmpty() and last == None):
+
+        c = q.pop()
+        visited[c[0]] = True
+
+        for su in problem.getSuccessors(c[0]):
+            if su[0] in visited: continue
+            pred[su[0]] = c
+            q.push(su)
+            # Is goal
+            if problem.isGoalState(su[0]):
+                last = su
+
+    # Return empty
+    if last == None: return []
+
+    # Reverse actions list
+    while last is not s1:
+        actions.append(last[1])
+        last = pred[last[0]]
+
+    return actions.reverse()
+
+
+    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
