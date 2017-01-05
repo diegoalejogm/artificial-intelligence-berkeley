@@ -110,16 +110,88 @@ def depthFirstSearch(problem):
 
     actions.reverse()
     return actions
+    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pred, expanded = dict(), dict()
+    s = problem.getStartState()
+    s1 = (s,'',1)
+
+    q = util.Queue()
+    q.push(s1)
+    last = None
+
+    while(not q.isEmpty() and last == None):
+        c = q.pop()
+        if c[0] in expanded: continue
+
+        expanded[c[0]] = True
+        for su in problem.getSuccessors(c[0]):
+            if su[0] in pred: continue
+            pred[su[0]] = c
+            q.push(su)
+            # Is goal
+            if problem.isGoalState(su[0]):
+                last = su
+
+    # Return empty
+    if last == None: return []
+
+    # Reverse actions list
+    actions = []
+    while last is not s1:
+        actions.append(last[1])
+        last = pred[last[0]]
+        print last
+
+    print actions
+    actions.reverse()
+    return actions
+
+    #util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pred, expanded, cost = dict(), dict(), dict()
+    s = problem.getStartState()
+    s1 = (s,'None')
+
+    q = util.PriorityQueue()
+    cost[s] = 0
+    q.push(s1, 0)
+    last = None
+
+    while(not q.isEmpty() and last == None):
+        state, action = q.pop()
+        if state in expanded: continue
+        expanded[state] = True
+        # Is goal
+        if problem.isGoalState(state):
+            last = (state, action)
+        else:
+            for n_state, n_action, n_cost in problem.getSuccessors(state):
+                if n_state in expanded: continue
+                if n_state in cost and cost[n_state] <= n_cost+cost[state]: continue
+                cost[n_state] = n_cost + cost[state]
+                pred[n_state] = (state, action)
+                q.push((n_state, n_action), cost[n_state])
+
+    # Return empty
+    if last == None: return []
+
+    # Create actions list
+    actions = []
+    while last != s1:
+        actions.append(last[1])
+        last = pred[last[0]]
+        print actions
+    actions.reverse()
+
+    return actions
+    #util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -130,8 +202,44 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pred, expanded, cost = dict(), dict(), dict()
+    s = problem.getStartState()
+    s1 = (s,'None')
+
+    q = util.PriorityQueue()
+    cost[s] = 0
+    q.push(s1, 0)
+    last = None
+
+    while(not q.isEmpty() and last == None):
+        state, action = q.pop()
+        if state in expanded: continue
+        expanded[state] = True
+        # Is goal
+        if problem.isGoalState(state):
+            last = (state, action)
+        else:
+            for n_state, n_action, n_cost in problem.getSuccessors(state):
+                if n_state in expanded: continue
+                if n_state in cost and cost[n_state] <= n_cost+cost[state]: continue
+                cost[n_state] = n_cost + cost[state]
+                pred[n_state] = (state, action)
+                h = heuristic(n_state, problem)
+                q.push((n_state, n_action), cost[n_state] + h)
+
+    # Return empty
+    if last == None: return []
+
+    # Create actions list
+    actions = []
+    while last != s1:
+        actions.append(last[1])
+        last = pred[last[0]]
+        print actions
+    actions.reverse()
+
+    return actions
 
 
 # Abbreviations
