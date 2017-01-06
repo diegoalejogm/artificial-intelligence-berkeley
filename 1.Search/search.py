@@ -144,9 +144,7 @@ def breadthFirstSearch(problem):
     while last is not s1:
         actions.append(last[1])
         last = pred[last[0]]
-        print last
 
-    print actions
     actions.reverse()
     return actions
 
@@ -187,7 +185,6 @@ def uniformCostSearch(problem):
     while last != s1:
         actions.append(last[1])
         last = pred[last[0]]
-        print actions
     actions.reverse()
 
     return actions
@@ -236,7 +233,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     while last != s1:
         actions.append(last[1])
         last = pred[last[0]]
-        print actions
     actions.reverse()
 
     return actions
