@@ -77,71 +77,57 @@ def depthFirstSearch(problem):
     Search the deepest nodes in the search tree first.
     """
 
-    actions = []
-    pred = dict()
-    visited = dict()
+    pred, visited = dict(), dict()
 
     s = problem.getStartState()
-    s1 = (s,'',1)
     q = util.Stack()
-    q.push(s1)
+    q.push( (s, '', None) ) #(State, action, parent)
     last = None
 
     while(not q.isEmpty() and last == None):
-
         c = q.pop()
-        visited[c[0]] = True
-
-        for su in problem.getSuccessors(c[0]):
-            if su[0] in visited: continue
-            pred[su[0]] = c
-            q.push(su)
-            # Is goal
-            if problem.isGoalState(su[0]):
-                last = su
+        visited[c[0]], pred[c[0]] = True, c[1:]
+        if problem.isGoalState(c[0]):
+            last = c[1:]
+        else:
+            for su in problem.getSuccessors(c[0]):
+                if(su[0] not in visited):
+                    q.push( su[:2] + (c[0],) )
 
     # Return empty
     if last == None: return []
-
     # Reverse actions list
-    while last is not s1:
-        actions.append(last[1])
-        last = pred[last[0]]
+    actions = []
+    while last[1] is not None:
+        actions.append(last[0])
+        last = pred[last[1]]
 
     actions.reverse()
     return actions
-    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
 
-    pred, expanded = dict(), dict()
-    s = problem.getStartState()
-    s1 = (s,'',1)
+    pred, s, q = dict(), problem.getStartState(), util.Queue()
 
-    q = util.Queue()
-    q.push(s1)
-    last = None
+    q.push( (s, None) ) # State, action
+    pred[s], last = (None, None), None
 
     while(not q.isEmpty() and last == None):
         c = q.pop()
-        if c[0] in expanded: continue
-
-        expanded[c[0]] = True
+        if problem.isGoalState(c[0]): # Is goal
+            last = c
+            break
         for su in problem.getSuccessors(c[0]):
             if su[0] in pred: continue
             pred[su[0]] = c
             q.push(su)
-            # Is goal
-            if problem.isGoalState(su[0]):
-                last = su
-
     # Return empty
     if last == None: return []
 
     # Reverse actions list
     actions = []
-    while last is not s1:
+    while last[1] is not None:
         actions.append(last[1])
         last = pred[last[0]]
 
